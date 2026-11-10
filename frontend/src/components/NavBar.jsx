@@ -8,7 +8,7 @@ function NavBar() {
     return (
         <div className='flex flex-col py-2 bg-[#121212] text-xl'>
             <div className='px-2'>
-                <NavLink className='block py-3 flex gap-2 font-bold'><FontAwesomeIcon icon={faTiktok} color='#fff' className='bg-gray-500 p-1 rounded-sm' /><span><span className='text-[#25F4EE]'>Affiliate</span> <span className='text-[#FE2C55]'>KPI</span></span></NavLink>
+                <NavLink to='/' className='block py-3 flex gap-2 font-bold'><FontAwesomeIcon icon={faTiktok} color='#fff' className='bg-gray-500 p-1 rounded-sm' /><span><span className='text-[#25F4EE]'>Affiliate</span> <span className='text-[#FE2C55]'>KPI</span></span></NavLink>
                 <hr className='' />
             </div>
             <div className='flex flex-1 flex-col py-3 *:text-left *:py-2.5 *:px-4 *:hover:bg-[#303030]'>

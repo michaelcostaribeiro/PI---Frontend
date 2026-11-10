@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router'
+import { useState } from 'react'
 
 // Components
 import NavBar from './components/NavBar'
@@ -9,8 +10,8 @@ import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 import Products from './pages/Products'
 import Product from './pages/Product'
-import {  useState } from 'react'
 import AddProduct from './pages/AddProduct'
+import EditProduct from './pages/EditProduct'
 
 
 function App() {
@@ -71,12 +72,14 @@ function App() {
     <div className='flex h-screen w-screen'>
       <NavBar/>
       <Routes className='flex flex-col'>
-        <Route path='/' element={<Home/>}/>
+        <Route path='/' element={<Home items={items}/>}/>
         <Route path='/reports' element={<Reports/>}/>
         <Route path='/settings' element={<Settings/>}/>
         <Route path='/products' element={<Products items={items} />} />
         <Route path='/add' element={<AddProduct items={items} setItems={setItems} />} />
         <Route path='/product/:id' element={<Product items={items} />}/>
+        <Route path='/edit/:id' element={<EditProduct items={items} setItems={setItems} />} />
+        
       </Routes>
     </div>
   )

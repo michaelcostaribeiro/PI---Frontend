@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 
 const AddProduct = ({ items, setItems }) => {
 
@@ -27,7 +29,7 @@ const AddProduct = ({ items, setItems }) => {
     async function handleForm(e) {
         e.preventDefault()
         setItems([...items, {
-            id: items[items.length - 1].id+1,
+            id: items[items.length - 1] + (Number.parseInt(Math.random() * 100)),
             img_url:'',
             name: itemName,
             price: 12,
@@ -41,7 +43,14 @@ const AddProduct = ({ items, setItems }) => {
 
     return (
         <div className='flex flex-1 items-center justify-center'>
-            <form onSubmit={(e) => handleForm(e)} className='flex flex-col gap-2 p-2 bg-[#121212] rounded-lg xl:w-1/4'>
+            <form
+                onSubmit={(e) => handleForm(e)}
+                className='flex flex-col gap-2 p-2 bg-[#121212] rounded-lg w-3/4 xl:w-2/4 relative'
+            >
+                <Link to={`/`} className='absolute top-2 left-2'>
+                    <FontAwesomeIcon icon={faAngleLeft} />
+
+                </Link>
                 <fieldset className='mx-auto'>
                     <legend>Adicionar Produto</legend>
 
