@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router';
 
-function Product() {
+const Product = ({ items }) => {
+
+  const { id } = useParams();
+
+  const [product, setProduct] = useState(null)
+
+  useEffect(() => {
+    setProduct(items.find((item) => item.id == id))
+    console.log(items.find((item) => item.id == id))
+  }, [])
+
   return (
-    <div>Product</div>
+    <>
+      {product && <div className='flex flex-1 items-center justify-center'>Item: {product.name}</div>}
+
+    </>
   )
 }
 

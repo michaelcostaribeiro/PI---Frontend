@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse, faBagShopping, faMagnifyingGlassPlus, faGears, faAngleDown, faCalendar, faMagnifyingGlass, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { Link } from 'react-router'
 
 function Products({items}) {
 
@@ -50,9 +51,9 @@ function Products({items}) {
               </div>
             </div>
 
-            <div className='flex items-center text-4xl'>
+            <Link to={`/product/${item.id}`} className='flex items-center text-4xl'>
               <FontAwesomeIcon icon={faAngleRight} />
-            </div>
+            </Link>
           </li>
         })}
       </ul>
