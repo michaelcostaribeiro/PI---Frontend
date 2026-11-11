@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHouse, faBagShopping, faMagnifyingGlassPlus, faGears, faAngleDown, faCalendar, faMagnifyingGlass, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router'
 
-function Products({items}) {
+function Products({ items }) {
 
 
 
@@ -25,34 +25,32 @@ function Products({items}) {
         *:flex *:h-30 *:rounded-xl *:bg-[#202020] *:p-2.5
         xl:flex-row xl:*:min-w-[32.75%]'>
 
-        {items && items.map((item)=>{
+        {items && items.map((item) => {
           return <li>
-            <div className='bg-white h-full w-25 rounded-xl'>
-            </div>
+            <Link to={`/product/${item.id}`} className='flex' >
 
-            <div className='flex-1 flex flex-col px-5 text-white'>
-              <h3 className='flex-1'>{item.name}</h3>
-
-              <div className='flex gap-10 *:flex *:flex-col'>
-                <div>
-                  <p>R${item.price}</p>
-                  <p>Comissão</p>
-                </div>
-
-                <div>
-                  <p>{item.clicks}</p>
-                  <p>Cliques</p>
-                </div>
-
-                <div>
-                  <p>{item.sold}</p>
-                  <p>Vendas</p>
+              <div className='bg-white h-full w-25 rounded-xl'>
+              </div>
+              <div className='flex-1 flex flex-col px-5 text-white'>
+                <h3 className='flex-1'>{item.name}</h3>
+                <div className='flex gap-10 *:flex *:flex-col'>
+                  <div>
+                    <p>R${item.price}</p>
+                    <p>Comissão</p>
+                  </div>
+                  <div>
+                    <p>{item.clicks}</p>
+                    <p>Cliques</p>
+                  </div>
+                  <div>
+                    <p>{item.sold}</p>
+                    <p>Vendas</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <Link to={`/product/${item.id}`} className='flex items-center text-4xl'>
-              <FontAwesomeIcon icon={faAngleRight} />
+              <div className='flex items-center text-4xl'>
+                <FontAwesomeIcon icon={faAngleRight} />
+              </div>
             </Link>
           </li>
         })}
