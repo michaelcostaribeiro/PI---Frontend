@@ -71,7 +71,7 @@ const EditProduct = ({ items, setItems }) => {
         <div className='flex flex-1 items-center justify-center'>
             <form
                 onSubmit={(e) => handleForm(e)}
-                className='flex flex-col gap-2 p-2 bg-[#121212] rounded-lg w-3/4 xl:w-2/4 relative'
+                className='flex flex-col gap-2 p-2 bg-[#121212] rounded-lg w-3/4 xl:w-3/8 relative'
             >
                 <Link to={`/`} className='absolute top-2 left-2'>
                     <FontAwesomeIcon icon={faAngleLeft} />

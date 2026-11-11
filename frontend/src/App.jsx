@@ -12,6 +12,8 @@ import Products from './pages/Products'
 import Product from './pages/Product'
 import AddProduct from './pages/AddProduct'
 import EditProduct from './pages/EditProduct'
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 
 function App() {
@@ -79,6 +81,8 @@ function App() {
         <Route path='/add' element={<AddProduct items={items} setItems={setItems} />} />
         <Route path='/product/:id' element={<Product items={items} />}/>
         <Route path='/edit/:id' element={<EditProduct items={items} setItems={setItems} />} />
+        <Route path='/login' element={<Login/>}/>
+        <Route path='/register' element={<Register/>}/>
         
       </Routes>
     </div>
