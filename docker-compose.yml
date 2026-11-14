@@ -40,6 +40,8 @@ services:
     build:
       context: .
       target: frontend
+      args:
+        VITE_DEFAULT_USER_ID: ${VITE_DEFAULT_USER_ID:-1}
     container_name: affiliate-kpi-frontend
     restart: unless-stopped
     ports:

@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 // Components
 import NavBar from './components/NavBar'
@@ -14,79 +14,40 @@ import AddProduct from './pages/AddProduct'
 import EditProduct from './pages/EditProduct'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import { DEFAULT_USER_ID, getProducts } from './api'
 
 
 function App() {
 
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      img_url: '',
-      name: 'Copo Térmico Stanley com Tampa',
-      price: '50,00',
-      clicks: 17400,
-      sold: 102, 
-      store: 'Stanley Official Store'
-    },
-    {
-      id: 2,
-      img_url: '',
-      name: 'Relógio',
-      price: '50,00',
-      clicks: 17400,
-      sold: 102, 
-      store: 'Stanley Official Store'
-    },
-    {
-      id: 3,
-      img_url: '',
-      name: 'Kit',
-      price: '50,00',
-      clicks: 17400,
-      sold: 102, 
-      store: 'Stanley Official Store'
-    },
-    {
-      id: 4,
-      img_url: '',
-      name: 'Copo Térmico',
-      price: '50,00',
-      clicks: 17400,
-      sold: 102, 
-      store: 'Stanley Official Store'
-    },
-    {
-      id: 5,
-      img_url: '',
-      name: 'Relógio',
-      price: '50,00',
-      clicks: 17400,
-      sold: 102, 
-      store: 'Stanley Official Store'
-    },
-    {
-      id: 6,
-      img_url: '',
-      name: 'Kit',
-      price: '50,00',
-      clicks: 17400,
-      sold: 102,
-      store: 'Stanley Official Store'
-    }
-  ])
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const loadProducts = useCallback(() => {
+    setLoading(true)
+    setError('')
+    getProducts(DEFAULT_USER_ID)
+      .then(({ produtos }) => setItems(produtos))
+      .catch((requestError) => setError(requestError.message))
+      .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    loadProducts()
+  }, [loadProducts])
 
 
   return (
     <div className='flex h-screen w-screen'>
       <NavBar />
       <Routes className='flex flex-col'>
-        <Route path='/' element={<Home items={items} />} />
+        <Route path='/' element={<Home items={items} loading={loading} error={error} />} />
         <Route path='/reports' element={<Reports />} />
         <Route path='/settings' element={<Settings />} />
-        <Route path='/products' element={<Products items={items} />} />
-        <Route path='/add' element={<AddProduct items={items} setItems={setItems} />} />
-        <Route path='/product/:id' element={<Product items={items} />} />
-        <Route path='/edit/:id' element={<EditProduct items={items} setItems={setItems} />} />
+        <Route path='/products' element={<Products items={items} loading={loading} error={error} />} />
+        <Route path='/add' element={<AddProduct />} />
+        <Route path='/product/:id' element={<Product />} />
+        <Route path='/edit/:id' element={<EditProduct refreshProducts={loadProducts} />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
 

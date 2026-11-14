@@ -3,12 +3,14 @@ import { useParams, Link } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft, faArrowTrendDown, faArrowTrendUp, faShareNodes, faStore } from '@fortawesome/free-solid-svg-icons'
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { DEFAULT_USER_ID, getProduct } from '../api'
 
-const Product = ({ items }) => {
+const Product = () => {
 
   const { id } = useParams();
 
   const [product, setProduct] = useState(null)
+  const [error, setError] = useState('')
 
 
   async function handleShareButton(e) {
@@ -16,22 +18,23 @@ const Product = ({ items }) => {
   }
 
   useEffect(() => {
-    setProduct(items.find((item) => item.id == id))
-  }, [])
+    getProduct(DEFAULT_USER_ID, id)
+      .then(setProduct)
+      .catch((requestError) => setError(requestError.message))
+  }, [id])
 
-  const combinedData = product ? [
-    { name: 'Seg', cliques: Math.round(product.clicks * 0.4), views: Math.round(123 * 25) , vendas: Math.round(product.sold * 25.4) },
-    { name: 'Ter', cliques: Math.round(product.clicks * 0.6), views: Math.round(123 * 25.5) , vendas: Math.round(product.sold * 2.6) },
-    { name: 'Qua', cliques: Math.round(product.clicks * 0.5), views: Math.round(123 * 28) , vendas: Math.round(product.sold * 3.5) },
-    { name: 'Qui', cliques: Math.round(product.clicks * 0.8), views: Math.round(123 * 80) , vendas: Math.round(product.sold * 6.8) },
-    { name: 'Sex', cliques: Math.round(product.clicks * 0.7), views: Math.round(123 * 25) , vendas: Math.round(product.sold * 5.7) },
-    { name: 'Sáb', cliques: Math.round(product.clicks * 0.9), views: Math.round(123 * 100) , vendas: Math.round(product.sold * 10.9) },
-    { name: 'Dom', cliques: Number(product.clicks), views: Math.round(123 * 250), vendas: Number(product.sold) },
-  ] : [];
+  const combinedData = product?.metrics?.map((metric) => ({
+    name: metric.date.slice(5),
+    cliques: metric.clicks,
+    views: metric.views,
+    vendas: metric.sold,
+  })) || []
 
 
   return (
     <>
+      {error && <p className='p-4 text-red-400'>{error}</p>}
+      {!product && !error && <p className='p-4'>Carregando produto...</p>}
       {product && <div className='flex flex-col gap-2 flex-1 p-4'>
         <div className='flex items-center'>
           <Link to={'/'}>
@@ -64,9 +67,9 @@ const Product = ({ items }) => {
                 <p className='text-white'>{product.clicks}</p>
                 <p className='text-lg'>Cliques</p>
               </div>
-              <div className='text-green-300 font-bold my-auto'>
-                <p>27%</p>
-                <FontAwesomeIcon icon={faArrowTrendUp} />
+              <div className={product.trends.clicks >= 0 ? 'text-green-300 font-bold my-auto' : 'text-red-500 font-bold my-auto'}>
+                <p>{product.trends.clicks}%</p>
+                <FontAwesomeIcon icon={product.trends.clicks >= 0 ? faArrowTrendUp : faArrowTrendDown} />
               </div>
             </div>
 
@@ -75,20 +78,20 @@ const Product = ({ items }) => {
                 <p className='text-white'>{product.sold}</p>
                 <p className='text-lg'>Vendas</p>
               </div>
-              <div className='text-green-300 font-bold my-auto'>
-                <p>10%</p>
-                <FontAwesomeIcon icon={faArrowTrendUp} />
+              <div className={product.trends.sold >= 0 ? 'text-green-300 font-bold my-auto' : 'text-red-500 font-bold my-auto'}>
+                <p>{product.trends.sold}%</p>
+                <FontAwesomeIcon icon={product.trends.sold >= 0 ? faArrowTrendUp : faArrowTrendDown} />
               </div>
             </div>
 
             <div>
               <div className='flex flex-col justify-between font-semibold'>
-                <p className='text-white'>R${product.price}</p>
+                <p className='text-white'>R${Number(product.commission).toFixed(2)}</p>
                 <p className='text-lg'>Comissão</p>
               </div>
-              <div className='text-red-500 font-bold my-auto'>
-                <p>17%</p>
-                <FontAwesomeIcon icon={faArrowTrendDown} />
+              <div className={product.trends.commission >= 0 ? 'text-green-300 font-bold my-auto' : 'text-red-500 font-bold my-auto'}>
+                <p>{product.trends.commission}%</p>
+                <FontAwesomeIcon icon={product.trends.commission >= 0 ? faArrowTrendUp : faArrowTrendDown} />
               </div>
             </div>
 

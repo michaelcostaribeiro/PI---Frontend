@@ -3,11 +3,11 @@ import { useNavigate, Link } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
 
-const AddProduct = ({ items, setItems }) => {
+const AddProduct = () => {
 
     const navigate = useNavigate('')
 
-    const [categorias, setCategorias] = useState(['Categoria 1', 'Categoria 2', 'Categoria 3'])
+    const categorias = ['Categoria 1', 'Categoria 2', 'Categoria 3']
 
     const [itemName, setItemName] = useState('')
     const [selectedCategories, setSelectedCategories] = useState([])
@@ -28,17 +28,7 @@ const AddProduct = ({ items, setItems }) => {
 
     async function handleForm(e) {
         e.preventDefault()
-        setItems([...items, {
-            id: items[items.length - 1] + (Number.parseInt(Math.random() * 100)),
-            img_url: '',
-            name: itemName,
-            price: 12,
-            clicks: 15,
-            sold: 1
-        }])
-
         navigate('/products')
-
     }
 
     return (

@@ -2,70 +2,43 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { DEFAULT_USER_ID, getProduct, updateProduct } from '../api'
 
-const EditProduct = ({ items, setItems }) => {
+const EditProduct = ({ refreshProducts }) => {
 
     const { id } = useParams();
 
     const navigate = useNavigate('')
 
-    const [categorias, setCategorias] = useState(['Categoria 1', 'Categoria 2', 'Categoria 3'])
-
-    const [currentItem, setCurrentItem] = useState(null)
-
     const [itemName, setItemName] = useState('')
-    const [selectedCategories, setSelectedCategories] = useState([])
     const [itemUrl, setItemUrl] = useState('')
-    const [itemComission, setItemComission] = useState('')
-    const [itemStore, setItemStore] = useState('')
-
-    async function handleCheckboxChange(e, currentState, setState) {
-        const value = e.target.value;
-        const isChecked = e.target.checked;
-
-        if (isChecked) {
-            setSelectedCategories([...currentState, value])
-        } else {
-            setState(currentState.filter((categoria) => categoria !== value))
-        }
-    }
+    const [itemPrice, setItemPrice] = useState('')
+    const [error, setError] = useState('')
 
     async function handleForm(e) {
         e.preventDefault()
-
-        const filteredItem = items.filter((item) => item.id != id)
-
-        setItems([...filteredItem, {
-            id: currentItem.id,
-            img_url: '',
-            name: itemName,
-            price: 12,
-            clicks: 15,
-            sold: 1
-        }])
-
-        navigate('/products')
-
-    }
-
-    async function handleDelete(e){
-        e.preventDefault()
-
-        const filteredList = items.filter((item) => item.id != id)
-        setItems(filteredList)
-
-        navigate('/products')
+        try {
+            await updateProduct(DEFAULT_USER_ID, id, {
+                name: itemName,
+                price: Number(itemPrice),
+                img_url: itemUrl || null,
+            })
+            await refreshProducts()
+            navigate('/products')
+        } catch (requestError) {
+            setError(requestError.message)
+        }
     }
 
     useEffect(() => {
-        if (items && items.length > 0) {
-            const found = items.find((item) => item.id == id);
-            if (found) {
-                setCurrentItem(found)
-                setItemName(found.name)
-            }
-        }
-    }, [])
+        getProduct(DEFAULT_USER_ID, id)
+            .then((product) => {
+                setItemName(product.name)
+                setItemUrl(product.img_url || '')
+                setItemPrice(product.price)
+            })
+            .catch((requestError) => setError(requestError.message))
+    }, [id])
 
     return (
         <div className='flex flex-1 items-center justify-center'>
@@ -98,24 +71,8 @@ const EditProduct = ({ items, setItems }) => {
                         value={itemName}
                         onChange={(e) => setItemName(e.target.value)}
                     />
-                    <div>
-                        {categorias && categorias.map((categoria) => {
-                            return <div>
-                                <input
-                                    type="checkbox"
-                                    name="categories"
-                                    id={categoria}
-                                    value={categoria}
-                                    onChange={(e) => handleCheckboxChange(e, selectedCategories, setSelectedCategories)}
-                                    checked={selectedCategories.includes(categoria)} />
-                                <label htmlFor={categoria}> {categoria}</label>
-                            </div>
-                        })}
-                    </div>
-
                     <label htmlFor="url">Link</label>
                     <input
-                        required
                         type="url"
                         name="url"
                         id="url"
@@ -124,27 +81,18 @@ const EditProduct = ({ items, setItems }) => {
                         onChange={(e) => setItemUrl(e.target.value)}
                     />
 
-                    <label htmlFor="comission">Comissão</label>
+                    <label htmlFor="price">Preço</label>
                     <input
                         required
                         type="number"
-                        name="comission"
-                        id="comission"
+                        name="price"
+                        id="price"
                         className='py-1 px-2 text-white bg-white/10'
-                        value={itemComission}
-                        onChange={(e) => setItemComission(e.target.value)}
+                        value={itemPrice}
+                        onChange={(e) => setItemPrice(e.target.value)}
                     />
 
-                    <label htmlFor="store">Loja</label>
-                    <input
-                        required
-                        type="text"
-                        name="store"
-                        id="store"
-                        className='py-1 px-2 text-white bg-white/10'
-                        value={itemStore}
-                        onChange={(e) => setItemStore(e.target.value)}
-                    />
+                    {error && <p className='text-red-400'>{error}</p>}
 
                     <div className='flex justify-center gap-2'>
                         <input
@@ -153,10 +101,6 @@ const EditProduct = ({ items, setItems }) => {
                             value="Editar"
                             className='bg-white/20 rounded-xl w-fit px-5 py-1 text-white text-lg cursor-pointer'
                         />
-                        <button
-                            onClick={(e)=>handleDelete(e)}
-                            className='bg-red-800 rounded-xl w-fit px-5 py-1 text-white text-lg cursor-pointer'
-                        >Deletar</button>
                     </div>
                 </div>
 
