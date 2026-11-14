@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
-import { DEFAULT_USER_ID, getProduct, updateProduct } from '../api'
+import { DEFAULT_USER_ID, deleteProduct, getProduct, updateProduct } from '../api'
 
 const EditProduct = ({ refreshProducts }) => {
 
@@ -23,6 +23,17 @@ const EditProduct = ({ refreshProducts }) => {
                 price: Number(itemPrice),
                 img_url: itemUrl || null,
             })
+            await refreshProducts()
+            navigate('/products')
+        } catch (requestError) {
+            setError(requestError.message)
+        }
+    }
+
+    async function handleDelete() {
+        if (!window.confirm('Remover este produto do seu catálogo?')) return
+        try {
+            await deleteProduct(DEFAULT_USER_ID, id)
             await refreshProducts()
             navigate('/products')
         } catch (requestError) {
@@ -101,6 +112,11 @@ const EditProduct = ({ refreshProducts }) => {
                             value="Editar"
                             className='bg-white/20 rounded-xl w-fit px-5 py-1 text-white text-lg cursor-pointer'
                         />
+                        <button
+                            type='button'
+                            onClick={handleDelete}
+                            className='bg-red-800 rounded-xl w-fit px-5 py-1 text-white text-lg cursor-pointer'
+                        >Remover</button>
                     </div>
                 </div>
 

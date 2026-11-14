@@ -2,122 +2,101 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faAngleLeft } from '@fortawesome/free-solid-svg-icons'
+import { createProduct, DEFAULT_USER_ID } from '../api'
 
-const AddProduct = () => {
-
+const AddProduct = ({ refreshProducts }) => {
     const navigate = useNavigate('')
 
-    const categorias = ['Categoria 1', 'Categoria 2', 'Categoria 3']
-
     const [itemName, setItemName] = useState('')
-    const [selectedCategories, setSelectedCategories] = useState([])
     const [itemUrl, setItemUrl] = useState('')
-    const [itemComission, setItemComission] = useState('')
-    const [itemStore, setItemStore] = useState('')
-
-    async function handleCheckboxChange(e, currentState, setState) {
-        const value = e.target.value;
-        const isChecked = e.target.checked;
-
-        if (isChecked) {
-            setSelectedCategories([...currentState, value])
-        } else {
-            setState(currentState.filter((categoria) => categoria !== value))
-        }
-    }
+    const [itemPrice, setItemPrice] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
 
     async function handleForm(e) {
         e.preventDefault()
-        navigate('/products')
+        setLoading(true)
+        setError('')
+
+        try {
+            await createProduct({
+                name: itemName,
+                price: Number(itemPrice),
+                img_url: itemUrl || null,
+            }, DEFAULT_USER_ID)
+            await refreshProducts()
+            navigate('/products')
+        } catch (requestError) {
+            setError(requestError.message)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
         <div className='flex flex-1 items-center justify-center'>
             <form
-                onSubmit={(e) => handleForm(e)}
+                onSubmit={handleForm}
                 className='flex flex-col gap-2 p-2 bg-[#121212] rounded-lg w-3/4 xl:w-3/8 relative'
             >
-                <Link to={`/`} className='absolute top-2 left-2'>
+                <Link to='/' className='absolute top-2 left-2'>
                     <FontAwesomeIcon icon={faAngleLeft} />
-
                 </Link>
                 <fieldset className='mx-auto'>
                     <legend>Adicionar Produto</legend>
-
                 </fieldset>
                 <hr />
 
-
-
                 <div className='flex flex-col gap-1'>
+                    <p className='text-center text-zinc-300'>
+                        Preencha os dados básicos. A API fake irá gerar fabricante, loja,
+                        categoria, comissão e métricas automaticamente.
+                    </p>
 
-                    <label htmlFor="name">Nome do Produto</label>
+                    <label htmlFor='name'>Nome do Produto</label>
                     <input
                         required
-                        type="text"
-                        name="name"
-                        id="name"
+                        type='text'
+                        id='name'
+                        maxLength='150'
                         className='py-1 px-2 text-white bg-white/10'
                         value={itemName}
                         onChange={(e) => setItemName(e.target.value)}
                     />
-                    <div>
-                        {categorias && categorias.map((categoria) => {
-                            return <div>
-                                <input
-                                    type="checkbox"
-                                    name="categories"
-                                    id={categoria}
-                                    value={categoria}
-                                    onChange={(e) => handleCheckboxChange(e, selectedCategories, setSelectedCategories)}
-                                    checked={selectedCategories.includes(categoria)} />
-                                <label htmlFor={categoria}> {categoria}</label>
-                            </div>
-                        })}
-                    </div>
 
-                    <label htmlFor="url">Link</label>
+                    <label htmlFor='price'>Preço</label>
                     <input
                         required
-                        type="url"
-                        name="url"
-                        id="url"
+                        min='0'
+                        step='0.01'
+                        type='number'
+                        id='price'
+                        className='py-1 px-2 text-white bg-white/10'
+                        value={itemPrice}
+                        onChange={(e) => setItemPrice(e.target.value)}
+                    />
+
+                    <label htmlFor='url'>Imagem do Produto (opcional)</label>
+                    <input
+                        type='url'
+                        id='url'
+                        placeholder='https://...'
                         className='py-1 px-2 text-white bg-white/10'
                         value={itemUrl}
                         onChange={(e) => setItemUrl(e.target.value)}
                     />
 
-                    <label htmlFor="comission">Comissão</label>
-                    <input
-                        required
-                        type="number"
-                        name="comission"
-                        id="comission"
-                        className='py-1 px-2 text-white bg-white/10'
-                        value={itemComission}
-                        onChange={(e) => setItemComission(e.target.value)}
-                    />
+                    {error && <p className='text-red-400'>{error}</p>}
 
-                    <label htmlFor="store">Loja</label>
-                    <input
-                        required
-                        type="text"
-                        name="store"
-                        id="store"
-                        className='py-1 px-2 text-white bg-white/10'
-                        value={itemStore}
-                        onChange={(e) => setItemStore(e.target.value)}
-                    />
-
-                    <input
-                        required
-                        type="submit"
-                        value="Adicionar"
-                        className='bg-white/20 rounded-xl w-fit px-5 py-1 mx-auto text-white text-lg cursor-pointer'
-                    />
+                    <button
+                        type='submit'
+                        disabled={loading}
+                        className='bg-white/20 rounded-xl w-fit px-5 py-1 mx-auto mt-2 text-white text-lg cursor-pointer disabled:opacity-50'
+                    >
+                        {loading ? 'Criando...' : 'Adicionar produto'}
+                    </button>
                 </div>
             </form>
-
         </div>
     )
 }

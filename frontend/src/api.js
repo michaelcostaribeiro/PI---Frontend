@@ -41,3 +41,16 @@ export function updateProduct(userId, productId, product) {
     body: JSON.stringify(product),
   })
 }
+
+export function createProduct(product, userId = DEFAULT_USER_ID) {
+  return request(`/api/afiliados/${userId}/produtos`, {
+    method: 'POST',
+    body: JSON.stringify(product),
+  })
+}
+
+export function deleteProduct(userId, productId) {
+  return request(`/api/afiliados/${userId}/produtos/${productId}`, {
+    method: 'DELETE',
+  })
+}

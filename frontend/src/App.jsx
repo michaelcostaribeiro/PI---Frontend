@@ -45,7 +45,7 @@ function App() {
         <Route path='/reports' element={<Reports />} />
         <Route path='/settings' element={<Settings />} />
         <Route path='/products' element={<Products items={items} loading={loading} error={error} />} />
-        <Route path='/add' element={<AddProduct />} />
+        <Route path='/add' element={<AddProduct refreshProducts={loadProducts} />} />
         <Route path='/product/:id' element={<Product />} />
         <Route path='/edit/:id' element={<EditProduct refreshProducts={loadProducts} />} />
         <Route path='/login' element={<Login />} />
