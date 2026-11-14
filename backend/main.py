@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
+import os
 
 app = FastAPI(
     title="Affiliate KPI - API",
@@ -20,10 +21,11 @@ app.add_middleware(
 def get_db_connection():
     try:
         conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="",
-            database="affiliate_kpi"
+            host=os.getenv("DB_HOST", "localhost"),
+            user=os.getenv("DB_USER", "root"),
+            password=os.getenv("DB_PASSWORD", ""),
+            database=os.getenv("DB_NAME", "affiliate_kpi"),
+            port=int(os.getenv("DB_PORT", "3306"))
         )
         return conn
     except mysql.connector.Error as err:
